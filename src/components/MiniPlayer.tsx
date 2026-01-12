@@ -1,18 +1,18 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { navigate } from "../navigation/RootNavigation";
 import { usePlayerStore } from "../store/playerStore";
 
-export default function MiniPlayer({ navigation }: any) {
-  const song = usePlayerStore((s) => s.currentSong);
+export default function MiniPlayer() {
+  const queue = usePlayerStore((s) => s.queue);
+  const currentIndex = usePlayerStore((s) => s.currentIndex);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
   const togglePlay = usePlayerStore((s) => s.togglePlay);
 
+  const song = queue[currentIndex];
   if (!song) return null;
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      onPress={() => navigation.navigate("Player")}
-    >
+    <TouchableOpacity activeOpacity={0.9} onPress={() => navigate("Player")}>
       <View style={styles.container}>
         <Image source={{ uri: song.image[1].link }} style={styles.image} />
 

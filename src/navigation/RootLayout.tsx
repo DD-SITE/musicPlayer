@@ -1,17 +1,5 @@
-import { StyleSheet, View } from "react-native";
-import MiniPlayer from "../components/MiniPlayer";
+import AppNavigator from "./AppNavigator";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <View style={styles.container}>
-      <View style={{ flex: 1 }}>{children}</View>
-      <MiniPlayer />
-    </View>
-  );
+export default function RootLayout() {
+  return <AppNavigator />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

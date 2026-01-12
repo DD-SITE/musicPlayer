@@ -10,14 +10,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MiniPlayer from "../components/MiniPlayer";
 import { usePlayerStore } from "../store/playerStore";
 
 export default function HomeScreen() {
   const [query, setQuery] = useState("arijit");
   const [songs, setSongs] = useState<any[]>([]);
+
   const playSong = usePlayerStore((s) => s.playSong);
-  const currentSong = usePlayerStore((s) => s.currentSong);
+  const queue = usePlayerStore((s) => s.queue);
+  const currentIndex = usePlayerStore((s) => s.currentIndex);
+  const restore = usePlayerStore((s) => s.restore);
+
+  const currentSong = queue[currentIndex];
   const navigation = useNavigation<any>();
 
   useEffect(() => {
@@ -30,6 +34,7 @@ export default function HomeScreen() {
     });
 
     fetchSongs();
+    restore();
   }, []);
 
   const fetchSongs = async (search = query) => {
@@ -45,39 +50,40 @@ export default function HomeScreen() {
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        <Text style={styles.title}>Music</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Music</Text>
 
-        <TextInput
-          placeholder="Search songs..."
-          placeholderTextColor="#aaa"
-          style={styles.search}
-          value={query}
-          onChangeText={setQuery}
-          onSubmitEditing={() => fetchSongs(query)}
-        />
+      <TextInput
+        placeholder="Search songs..."
+        placeholderTextColor="#aaa"
+        style={styles.search}
+        value={query}
+        onChangeText={setQuery}
+        onSubmitEditing={() => fetchSongs(query)}
+      />
 
-        <FlatList
-          data={songs}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.row} onPress={() => playSong(item)}>
+      <FlatList
+        data={songs}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => {
+          const isPlaying = currentSong?.id === item.id;
+
+          return (
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() => playSong(item, songs)}
+            >
               <Image source={{ uri: item.image[1].link }} style={styles.image} />
               <View>
                 <Text style={styles.song}>{item.name}</Text>
                 <Text style={styles.artist}>{item.primaryArtists}</Text>
-                {currentSong?.id === item.id && (
-                  <Text style={styles.playing}>Playing...</Text>
-                )}
+                {isPlaying && <Text style={styles.playing}>Playing…</Text>}
               </View>
             </TouchableOpacity>
-          )}
-        />
-      </View>
-
-      <MiniPlayer navigation={navigation} />
-    </>
+          );
+        }}
+      />
+    </View>
   );
 }
 
@@ -124,6 +130,3 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-
-
-
