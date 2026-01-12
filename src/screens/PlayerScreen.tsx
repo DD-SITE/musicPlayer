@@ -14,6 +14,11 @@ export default function PlayerScreen() {
   const sound = usePlayerStore((s) => s.sound);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
 
+  const shuffle = usePlayerStore((s) => s.shuffle);
+  const repeat = usePlayerStore((s) => s.repeat);
+  const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
+  const cycleRepeat = usePlayerStore((s) => s.cycleRepeat);
+
   const song = queue[currentIndex];
   const navigation = useNavigation<any>();
 
@@ -58,6 +63,19 @@ export default function PlayerScreen() {
       <View style={styles.timeRow}>
         <Text style={styles.time}>{format(position)}</Text>
         <Text style={styles.time}>{format(duration)}</Text>
+      </View>
+
+      {/* Shuffle / Repeat */}
+      <View style={styles.modes}>
+        <TouchableOpacity onPress={toggleShuffle}>
+          <Text style={[styles.mode, shuffle && styles.active]}>🔀</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={cycleRepeat}>
+          <Text style={[styles.mode, repeat !== "off" && styles.active]}>
+            {repeat === "one" ? "🔂" : "🔁"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.controlsRow}>
@@ -142,6 +160,19 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#333",
+  },
+  modes: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "50%",
+    marginTop: 24,
+  },
+  mode: {
+    fontSize: 22,
+    color: "#777",
+  },
+  active: {
+    color: "#FF8C00",
   },
 });
 

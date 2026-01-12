@@ -4,6 +4,8 @@ import { create } from "zustand";
 
 const STORAGE_KEY = "MUSIC_PLAYER_STATE";
 
+type RepeatMode = "off" | "one" | "all";
+
 type PlayerState = {
   queue: any[];
   currentIndex: number;
@@ -11,6 +13,9 @@ type PlayerState = {
   isPlaying: boolean;
   position: number;
   duration: number;
+
+  shuffle: boolean;
+  repeat: RepeatMode;
 
   playSong: (song: any, list?: any[]) => Promise<void>;
   togglePlay: () => Promise<void>;
@@ -21,6 +26,9 @@ type PlayerState = {
   playFromQueue: (index: number) => Promise<void>;
   removeFromQueue: (index: number) => void;
   reorderQueue: (from: number, to: number) => void;
+
+  toggleShuffle: () => void;
+  cycleRepeat: () => void;
 };
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -30,6 +38,9 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   isPlaying: false,
   position: 0,
   duration: 1,
+
+  shuffle: false,
+  repeat: "off",
 
   playSong: async (song, list = []) => {
     try {
@@ -75,7 +86,12 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
         await AsyncStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ queue, currentIndex: index })
+          JSON.stringify({
+            queue,
+            currentIndex: index,
+            shuffle: get().shuffle,
+            repeat: get().repeat,
+          })
         );
       }
     } catch (e) {
@@ -103,22 +119,70 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   },
 
   next: async () => {
-    const { queue, currentIndex } = get();
-    if (currentIndex + 1 >= queue.length) return;
-    await get().playFromQueue(currentIndex + 1);
+    const { queue, currentIndex, shuffle, repeat } = get();
+
+    if (repeat === "one") {
+      await get().playFromQueue(currentIndex);
+      return;
+    }
+
+    let nextIndex = currentIndex + 1;
+
+    if (shuffle) {
+      nextIndex = Math.floor(Math.random() * queue.length);
+    }
+
+    if (nextIndex >= queue.length) {
+      if (repeat === "all") {
+        nextIndex = 0;
+      } else {
+        return;
+      }
+    }
+
+    await get().playFromQueue(nextIndex);
   },
 
   previous: async () => {
-    const { queue, currentIndex } = get();
+    const { currentIndex } = get();
     if (currentIndex - 1 < 0) return;
     await get().playFromQueue(currentIndex - 1);
+  },
+
+  toggleShuffle: () => {
+    const val = !get().shuffle;
+    set({ shuffle: val });
+
+    AsyncStorage.mergeItem(
+      STORAGE_KEY,
+      JSON.stringify({ shuffle: val })
+    );
+  },
+
+  cycleRepeat: () => {
+    const current = get().repeat;
+    const next =
+      current === "off" ? "all" : current === "all" ? "one" : "off";
+
+    set({ repeat: next });
+
+    AsyncStorage.mergeItem(
+      STORAGE_KEY,
+      JSON.stringify({ repeat: next })
+    );
   },
 
   restore: async () => {
     const saved = await AsyncStorage.getItem(STORAGE_KEY);
     if (!saved) return;
 
-    const { queue, currentIndex } = JSON.parse(saved);
+    const { queue, currentIndex, shuffle, repeat } = JSON.parse(saved);
+
+    set({
+      shuffle: shuffle ?? false,
+      repeat: repeat ?? "off",
+    });
+
     if (queue?.length && currentIndex >= 0) {
       set({ queue, currentIndex });
       await get().playFromQueue(currentIndex);
@@ -157,13 +221,9 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
     let newIndex = currentIndex;
 
-    if (from === currentIndex) {
-      newIndex = to;
-    } else if (from < currentIndex && to >= currentIndex) {
-      newIndex--;
-    } else if (from > currentIndex && to <= currentIndex) {
-      newIndex++;
-    }
+    if (from === currentIndex) newIndex = to;
+    else if (from < currentIndex && to >= currentIndex) newIndex--;
+    else if (from > currentIndex && to <= currentIndex) newIndex++;
 
     set({ queue: newQueue, currentIndex: newIndex });
 
