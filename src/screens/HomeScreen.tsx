@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import { useEffect, useState } from "react";
 import {
@@ -22,7 +21,6 @@ export default function HomeScreen() {
   const restore = usePlayerStore((s) => s.restore);
 
   const currentSong = queue[currentIndex];
-  const navigation = useNavigation<any>();
 
   useEffect(() => {
     Audio.setAudioModeAsync({
@@ -51,11 +49,11 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Music</Text>
+      <Text style={styles.header}>Music</Text>
 
       <TextInput
-        placeholder="Search songs..."
-        placeholderTextColor="#aaa"
+        placeholder="Search songs"
+        placeholderTextColor="#888"
         style={styles.search}
         value={query}
         onChangeText={setQuery}
@@ -65,19 +63,27 @@ export default function HomeScreen() {
       <FlatList
         data={songs}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => {
           const isPlaying = currentSong?.id === item.id;
 
           return (
             <TouchableOpacity
-              style={styles.row}
+              style={styles.card}
               onPress={() => playSong(item, songs)}
             >
               <Image source={{ uri: item.image[1].link }} style={styles.image} />
-              <View>
-                <Text style={styles.song}>{item.name}</Text>
-                <Text style={styles.artist}>{item.primaryArtists}</Text>
-                {isPlaying && <Text style={styles.playing}>Playing…</Text>}
+
+              <View style={{ flex: 1 }}>
+                <Text style={styles.song} numberOfLines={1}>
+                  {item.name}
+                </Text>
+                <Text style={styles.artist} numberOfLines={1}>
+                  {item.primaryArtists}
+                </Text>
+                {isPlaying && (
+                  <Text style={styles.playing}>Now Playing</Text>
+                )}
               </View>
             </TouchableOpacity>
           );
@@ -90,43 +96,49 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0F0F0F",
+    backgroundColor: "#0B0B0B",
     padding: 16,
   },
-  title: {
+  header: {
     color: "white",
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: "700",
     marginBottom: 12,
   },
   search: {
-    backgroundColor: "#1E1E1E",
+    backgroundColor: "#1A1A1A",
     color: "white",
-    padding: 12,
-    borderRadius: 8,
+    padding: 14,
+    borderRadius: 12,
     marginBottom: 16,
   },
-  row: {
+  card: {
     flexDirection: "row",
-    marginBottom: 12,
     alignItems: "center",
+    backgroundColor: "#141414",
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 12,
   },
   image: {
-    width: 50,
-    height: 50,
-    borderRadius: 6,
+    width: 56,
+    height: 56,
+    borderRadius: 8,
     marginRight: 12,
   },
   song: {
     color: "white",
     fontSize: 16,
+    fontWeight: "600",
   },
   artist: {
     color: "#aaa",
-    fontSize: 12,
+    fontSize: 13,
+    marginTop: 2,
   },
   playing: {
     color: "#1DB954",
     fontSize: 12,
+    marginTop: 4,
   },
 });

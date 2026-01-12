@@ -8,32 +8,45 @@ import { usePlayerStore } from "../store/playerStore";
 export default function QueueScreen() {
   const queue = usePlayerStore((s) => s.queue);
   const currentIndex = usePlayerStore((s) => s.currentIndex);
-  const playFromQueue = usePlayerStore((s) => s.playFromQueue);
+  const playSong = usePlayerStore((s) => s.playSong);
   const remove = usePlayerStore((s) => s.removeFromQueue);
-  const reorder = usePlayerStore((s) => s.reorderQueue);
+  const reorderQueue = usePlayerStore.getState().reorderQueue;
 
-  const renderItem = (params: RenderItemParams<any>) => {
-  const { item, drag, isActive, getIndex } = params;
-  const index = getIndex()!;
+  const renderItem = ({
+    item,
+    drag,
+    isActive,
+    getIndex,
+  }: RenderItemParams<any>) => {
+    const index = getIndex?.() ?? 0;
+    const isPlaying = index === currentIndex;
 
     return (
       <TouchableOpacity
+        onLongPress={drag}
+        activeOpacity={0.8}
         style={[
           styles.row,
-          isActive && { backgroundColor: "#1a1a1a" },
+          isActive && { backgroundColor: "#222" },
         ]}
-        onLongPress={drag}
-        onPress={() => playFromQueue(index)}
       >
-        <Text
-          style={[
-            styles.song,
-            index === currentIndex && styles.playing,
-          ]}
+        {/* Song name */}
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => playSong(item, queue)}
         >
-          {item.name}
-        </Text>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.song,
+              isPlaying && styles.playing,
+            ]}
+          >
+            {item.name}
+          </Text>
+        </TouchableOpacity>
 
+        {/* Remove button */}
         <TouchableOpacity onPress={() => remove(index)}>
           <Text style={styles.remove}>✕</Text>
         </TouchableOpacity>
@@ -49,7 +62,7 @@ export default function QueueScreen() {
         data={queue}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        onDragEnd={({ from, to }) => reorder(from, to)}
+        onDragEnd={({ from, to }) => reorderQueue(from, to)}
       />
     </View>
   );
@@ -58,31 +71,35 @@ export default function QueueScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0F0F0F",
-    padding: 16,
+    backgroundColor: "#0B0B0B",
+    paddingTop: 24,
   },
   title: {
     color: "white",
     fontSize: 22,
+    fontWeight: "700",
+    paddingHorizontal: 16,
     marginBottom: 12,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 14,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderColor: "#222",
   },
   song: {
     color: "white",
     fontSize: 16,
-    flex: 1,
+    flexShrink: 1,
   },
   playing: {
     color: "#1DB954",
+    fontWeight: "600",
   },
   remove: {
-    color: "red",
+    color: "#FF5555",
     fontSize: 18,
     paddingHorizontal: 12,
   },

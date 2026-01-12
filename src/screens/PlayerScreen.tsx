@@ -12,16 +12,15 @@ export default function PlayerScreen() {
   const position = usePlayerStore((s) => s.position);
   const duration = usePlayerStore((s) => s.duration);
   const sound = usePlayerStore((s) => s.sound);
-
-  const navigation = useNavigation<any>();
+  const isPlaying = usePlayerStore((s) => s.isPlaying);
 
   const song = queue[currentIndex];
+  const navigation = useNavigation<any>();
+
   if (!song) return null;
 
   const seek = async (value: number) => {
-    if (sound) {
-      await sound.setPositionAsync(value);
-    }
+    if (sound) await sound.setPositionAsync(value);
   };
 
   const format = (ms: number) => {
@@ -37,7 +36,7 @@ export default function PlayerScreen() {
         style={styles.queueButton}
         onPress={() => navigation.navigate("Queue")}
       >
-        <Text style={styles.queueText}>Queue</Text>
+        <Text style={{ color: "#FF8C00" }}>Queue</Text>
       </TouchableOpacity>
 
       <Image source={{ uri: song.image[2].link }} style={styles.image} />
@@ -46,13 +45,14 @@ export default function PlayerScreen() {
       <Text style={styles.artist}>{song.primaryArtists}</Text>
 
       <Slider
-        style={{ width: "100%", marginVertical: 20 }}
+        style={{ width: "100%", marginTop: 24 }}
         minimumValue={0}
         maximumValue={duration}
         value={position}
         onSlidingComplete={seek}
-        minimumTrackTintColor="#1DB954"
-        maximumTrackTintColor="#555"
+        minimumTrackTintColor="#FF8C00"
+        maximumTrackTintColor="#333"
+        thumbTintColor="#FF8C00"
       />
 
       <View style={styles.timeRow}>
@@ -66,7 +66,7 @@ export default function PlayerScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={togglePlay} style={styles.playButton}>
-          <Text style={styles.play}>⏯</Text>
+          <Text style={styles.playIcon}>{isPlaying ? "⏸" : "▶"}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={next}>
@@ -80,72 +80,68 @@ export default function PlayerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0F0F0F",
+    backgroundColor: "#0B0B0B",
     alignItems: "center",
-    justifyContent: "center",
     padding: 24,
   },
   image: {
-    width: 300,
-    height: 300,
-    borderRadius: 12,
+    width: 280,
+    height: 280,
+    borderRadius: 16,
+    marginTop: 40,
     marginBottom: 24,
   },
   title: {
     color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginTop: 12,
+    fontSize: 22,
+    fontWeight: "700",
   },
   artist: {
     color: "#aaa",
-    fontSize: 14,
+    marginTop: 4,
     marginBottom: 24,
   },
   controlsRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 24,
+    marginTop: 32,
   },
   skip: {
     color: "white",
-    fontSize: 32,
-    marginHorizontal: 24,
+    fontSize: 28,
+    marginHorizontal: 32,
   },
   playButton: {
-    backgroundColor: "#1DB954",
-    padding: 18,
-    borderRadius: 40,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "#FF8C00",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  play: {
-    color: "black",
-    fontSize: 22,
+  playIcon: {
+    color: "#000",
+    fontSize: 28,
     fontWeight: "bold",
   },
   timeRow: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 6,
   },
   time: {
-    color: "#aaa",
+    color: "#888",
     fontSize: 12,
   },
   queueButton: {
     position: "absolute",
     top: 50,
     right: 24,
-    zIndex: 10,
-    backgroundColor: "#1E1E1E",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    padding: 10,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#333",
   },
-  queueText: {
-    color: "#1DB954",
-    fontSize: 14,
-    fontWeight: "600",
-  },
 });
+

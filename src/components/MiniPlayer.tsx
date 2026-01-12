@@ -9,6 +9,7 @@ export default function MiniPlayer() {
   const togglePlay = usePlayerStore((s) => s.togglePlay);
 
   const song = queue[currentIndex];
+
   if (!song) return null;
 
   return (
@@ -16,11 +17,13 @@ export default function MiniPlayer() {
       <View style={styles.container}>
         <Image source={{ uri: song.image[1].link }} style={styles.image} />
 
-        <View style={{ flex: 1 }}>
+        <View style={styles.info}>
           <Text style={styles.title} numberOfLines={1}>
             {song.name}
           </Text>
-          <Text style={styles.artist}>{song.primaryArtists}</Text>
+          <Text style={styles.artist} numberOfLines={1}>
+            {song.primaryArtists}
+          </Text>
         </View>
 
         <TouchableOpacity
@@ -28,8 +31,9 @@ export default function MiniPlayer() {
             e.stopPropagation();
             togglePlay();
           }}
+          style={styles.playButton}
         >
-          <Text style={styles.control}>{isPlaying ? "⏸" : "▶️"}</Text>
+          <Text style={styles.playIcon}>{isPlaying ? "⏸" : "▶"}</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -38,31 +42,43 @@ export default function MiniPlayer() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#1E1E1E",
     flexDirection: "row",
     alignItems: "center",
     padding: 12,
+    backgroundColor: "#121212",
     borderTopWidth: 1,
-    borderColor: "#333",
+    borderColor: "#222",
   },
   image: {
     width: 48,
     height: 48,
-    borderRadius: 6,
+    borderRadius: 8,
     marginRight: 12,
+  },
+  info: {
+    flex: 1,
   },
   title: {
     color: "white",
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   artist: {
     color: "#aaa",
     fontSize: 12,
+    marginTop: 2,
   },
-  control: {
-    color: "white",
-    fontSize: 22,
-    paddingHorizontal: 12,
+  playButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "#FF8C00",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  playIcon: {
+    color: "#000",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
