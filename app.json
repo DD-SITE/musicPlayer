@@ -13,12 +13,22 @@
 
     "android": {
       "package": "com.divyam_expo.musicplayer",
-      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       }
     },
+
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
 
     "web": {
       "favicon": "./assets/images/favicon.png"
