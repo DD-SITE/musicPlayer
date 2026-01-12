@@ -6,18 +6,28 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
+
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
+      "package": "com.divyam_expo.musicplayer",
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       }
     },
+
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "entryPoint": "./App.tsx"
+
+    "extra": {
+      "eas": {
+        "projectId": "a6875e5a-0973-4bad-8939-185761c7c54a"
+      }
+    }
   }
 }
