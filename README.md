@@ -145,8 +145,7 @@ It includes:
 - Queue persistence  
 - Proper Android network configuration  
 
-👉 [Download Android APK]( https://github.com/yourname/music-player/releases/download/v1.0/music-player.apk](https://github.com/DD-SITE/musicPlayer/releases/download/v1.0/application-186a5bf7-4dce-45fd-b995-f074fcbc4eb3.apk )
-
+👉 [Download Android APK](https://github.com/DD-SITE/musicPlayer/releases/download/v1.0/application-186a5bf7-4dce-45fd-b995-f074fcbc4eb3.apk)
 ---
 
 ##  Important Implementation Notes
