@@ -1,3 +1,12 @@
+<p align="center">
+  <a href="https://github.com/DD-SITE/musicPlayer/releases/latest">
+    <img src="https://img.shields.io/badge/Download-Android%20APK-brightgreen?style=for-the-badge&logo=android"/>
+  </a>
+  <a href="https://drive.google.com/file/d/1rlYGEiR9jU05I4bXd5bJqfdiWlo7pWqh/view?usp=drivesdk">
+    <img src="https://img.shields.io/badge/Watch%20Demo-Google%20Drive-blue?style=for-the-badge&logo=google-drive"/>
+  </a>
+</p>
+
 #  React Native Music Player (Expo)
 
 A modern music streaming app built with **React Native (Expo)** that allows users to search songs, play music in the background, manage a dynamic queue, and control playback using a **mini player** and a **full player screen**.
@@ -187,7 +196,9 @@ A short demo video (2–3 minutes) is included showing:
 - Playing songs  
 - Queue management  
 - Shuffle & repeat  
-- Background playback  
+- Background playback
+
+https://github.com/user-attachments/assets/3921a599-6d8e-44be-8d5d-a3dcb96bbb2f 
 
 ---
 
