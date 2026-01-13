@@ -146,6 +146,9 @@ It includes:
 - Proper Android network configuration  
 
 *(Download the app)*
+https://github.com/DD-SITE/musicPlayer/releases/download/v1.0/application-186a5bf7-4dce-45fd-b995-f074fcbc4eb3.apk
+
+
 
 ---
 
